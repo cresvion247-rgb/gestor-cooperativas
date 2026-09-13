@@ -66,6 +66,8 @@ export default function ExpedienteDialog({ expediente, proyectos, onClose }) {
         });
         toast({ title: t('urba.updated') });
       } else {
+        payload.tenant_id = proyecto.tenant_id;
+        if (!payload.estado) payload.estado = 'en_tramite';
         const res = await base44.entities.ExpedienteUrbanistico.create(payload);
         await logAudit({ tenant_id: proyecto.tenant_id, accion: 'expediente_urbanistico_creado', entidad_tipo: 'ExpedienteUrbanistico', entidad_id: res?.id || null, valores_nuevos: payload });
         toast({ title: t('urba.created') });
