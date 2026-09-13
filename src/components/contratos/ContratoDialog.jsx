@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { logAudit } from '@/lib/audit';
 import { notifyCooperative } from '@/lib/notify';
@@ -107,22 +108,30 @@ export default function ContratoDialog({ contrato, cooperativas, proyectos, onCl
         <DialogHeader><DialogTitle>{isEdit ? t('con.editTitle') : t('con.newTitle')}</DialogTitle></DialogHeader>
         <div className="grid gap-4 sm:grid-cols-2">
           {field('codigo', t('con.f.code'))}
-          {field('titulo', t('inc.f.title'))}
+          {field('titulo', t('con.f.title'))}
           {field('categoria', t('con.f.category'))}
           {field('contraparte', t('con.f.counterpart'))}
           <div>
             <Label className="mb-1">{t('users.cooperative')}</Label>
-            <select value={cooperativaId} onChange={e => { setCooperativaId(e.target.value); setProyectoId(''); }} disabled={isEdit} className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm disabled:opacity-60">
-              <option value="">—</option>
-              {cooperativas.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <Select value={cooperativaId || undefined} onValueChange={v => { setCooperativaId(v); setProyectoId(''); }} disabled={isEdit}>
+              <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50 disabled:opacity-60">
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                {cooperativas.map(c => <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label className="mb-1">{t('common.project')}</Label>
-            <select value={proyectoId} onChange={e => setProyectoId(e.target.value)} className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm">
-              <option value="">—</option>
-              {coopProyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-            </select>
+            <Select value={proyectoId || undefined} onValueChange={setProyectoId}>
+              <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50">
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                {coopProyectos.map(p => <SelectItem key={p.id} value={p.id}>{p.nombre}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label className="mb-1">{t('con.f.amount')}</Label>

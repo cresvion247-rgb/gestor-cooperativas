@@ -609,5 +609,6 @@
   "concierge.mic": "Hablar",
   "concierge.listening": "Escuchando… pulsa para detener",
   "concierge.speakOn": "Desactivar respuestas habladas",
-  "concierge.speakOff": "Activar respuestas habladas"
+  "concierge.speakOff": "Activar respuestas habladas",
+  "con.f.title": "Título"
 }

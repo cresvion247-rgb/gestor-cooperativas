@@ -609,5 +609,6 @@
   "concierge.mic": "Hitz egin",
   "concierge.listening": "Entzuten… sakatu gelditzeko",
   "concierge.speakOn": "Desaktibatu ahots-erantzunak",
-  "concierge.speakOff": "Aktibatu ahots-erantzunak"
+  "concierge.speakOff": "Aktibatu ahots-erantzunak",
+  "con.f.title": "Izenburua"
 }
