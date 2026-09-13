@@ -6,6 +6,7 @@ import PageHeader from '@/components/erp/PageHeader';
 import DataTable from '@/components/erp/DataTable';
 import ExpedienteDialog from '@/components/urbanismo/ExpedienteDialog';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useI18n } from '@/lib/i18n';
 import { isCoopStaff } from '@/lib/permissions';
 import { formatDate } from '@/lib/format';
@@ -34,10 +35,15 @@ export default function Urbanismo() {
       />
       <div className="mb-4 flex items-center gap-3">
         <label className="text-sm font-medium text-slate-600">{t('common.project')}</label>
-        <select value={proyectoFilter} onChange={e => setProyectoFilter(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm">
-          <option value="todos">{t('common.all')}</option>
-          {proyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-        </select>
+        <Select value={proyectoFilter} onValueChange={setProyectoFilter}>
+          <SelectTrigger className="h-9 w-[16rem] rounded-xl border-slate-200 bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todos">{t('common.all')}</SelectItem>
+            {proyectos.map(p => <SelectItem key={p.id} value={p.id}>{p.nombre}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[
