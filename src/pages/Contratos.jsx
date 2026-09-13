@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import PageHeader from '@/components/erp/PageHeader';
+import ArchiveTabs from '@/components/erp/ArchiveTabs';
 import DataTable from '@/components/erp/DataTable';
 import ConfirmDialog from '@/components/erp/ConfirmDialog';
 import ContratoDialog from '@/components/contratos/ContratoDialog';
@@ -17,9 +18,10 @@ import { useI18n } from '@/lib/i18n';
 import { isCoopStaff } from '@/lib/permissions';
 import { PIPELINE, canApproveContract } from '@/lib/contracts';
 import { formatEur, formatDate } from '@/lib/format';
+import { archiveCounts, filterByArchiveTab, isContratoArchived } from '@/lib/archive';
 import { exportContratoPdf } from '@/lib/pdf';
 
-const ESTADOS = ['todos', ...PIPELINE, 'suspendido', 'cerrado'];
+const ESTADOS = ['todos', ...PIPELINE, 'suspendido', 'cerrado', 'archivado', 'vencido', 'resuelto'];
 
 export default function Contratos() {
   const { t, st } = useI18n();
@@ -33,16 +35,22 @@ export default function Contratos() {
 
   const [coopFilter, setCoopFilter] = useState('todas');
   const [estadoFilter, setEstadoFilter] = useState('todos');
+  const [tab, setTab] = useState('active');
   const [dialog, setDialog] = useState(null);
   const [confirming, setConfirming] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const staff = isCoopStaff(user);
   const isOverdue = c => c.fecha_vencimiento && new Date(c.fecha_vencimiento) < new Date();
-  const rows = contratos.filter(c =>
-    (coopFilter === 'todas' || c.cooperativa_id === coopFilter) &&
-    (estadoFilter === 'todos' || c.estado === estadoFilter)
+  const scoped = useMemo(
+    () => contratos.filter(c =>
+      (coopFilter === 'todas' || c.cooperativa_id === coopFilter) &&
+      (estadoFilter === 'todos' || c.estado === estadoFilter)
+    ),
+    [contratos, coopFilter, estadoFilter],
   );
+  const counts = useMemo(() => archiveCounts(scoped, isContratoArchived), [scoped]);
+  const rows = useMemo(() => filterByArchiveTab(scoped, tab, isContratoArchived), [scoped, tab]);
 
   const setEstado = async (c, estado) => {
     setBusy(true);
@@ -50,14 +58,19 @@ export default function Contratos() {
       const payload = { estado };
       if (estado === 'activo') payload.fecha_firma = new Date().toISOString().slice(0, 10);
       await base44.entities.Contrato.update(c.id, payload);
+      const archiveAction = ['cerrado', 'archivado'].includes(estado)
+        ? 'contrato_archivado'
+        : (isContratoArchived(c) ? 'contrato_reactivado' : 'contrato_estado');
       await logAudit({
         tenant_id: c.tenant_id,
-        accion: 'contrato_estado',
+        accion: archiveAction,
         entidad_tipo: 'Contrato',
         entidad_id: c.id,
         valores_anteriores: { estado: c.estado },
         valores_nuevos: payload
       });
+      if (isContratoArchived({ estado })) setTab('archived');
+      else if (isContratoArchived(c)) setTab('active');
       if (estado === 'activo') {
         if (c.proyecto_id && c.importe_total) {
           const proyecto = proyectos.find(p => p.id === c.proyecto_id);
@@ -128,6 +141,7 @@ export default function Contratos() {
         action={staff ? t('con.action') : undefined}
         onAction={staff ? () => setDialog({ type: 'edit', contrato: null }) : undefined}
       />
+      <ArchiveTabs value={tab} onChange={setTab} activeCount={counts.active} archivedCount={counts.archived} />
       <div className="mb-4 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-slate-600">{t('users.cooperative')}</label>
@@ -169,7 +183,15 @@ export default function Contratos() {
           { key: 'acciones', label: '', render: (_, c) => staff ? (
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="sm" onClick={() => setDialog({ type: 'detail', contrato: c })}>{t('common.manage')}</Button>
-              <Button variant="outline" size="sm" onClick={() => openEdit(c)}>{t('common.edit')}</Button>
+              {tab === 'active' && (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => openEdit(c)}>{t('common.edit')}</Button>
+                  <Button variant="outline" size="sm" disabled={busy} onClick={() => setConfirming({ contrato: c, estado: 'archivado' })}>{t('archive.action')}</Button>
+                </>
+              )}
+              {tab === 'archived' && (
+                <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" disabled={busy} onClick={() => setEstado(c, 'activo')}>{t('archive.unarchive')}</Button>
+              )}
             </div>
           ) : null }
         ]} rows={rows} />
@@ -190,12 +212,12 @@ export default function Contratos() {
       {dialog?.type === 'amend' && <ModificacionDialog contrato={dialog.contrato} onClose={() => setDialog(null)} />}
       {confirming && (
         <ConfirmDialog
-          title={confirming.estado === 'suspendido' ? t('con.suspendTitle') : t('con.closeTitle')}
-          description={confirming.estado === 'suspendido' ? t('con.suspendBody') : t('con.closeBody')}
+          title={confirming.estado === 'suspendido' ? t('con.suspendTitle') : confirming.estado === 'archivado' ? t('archive.action') : t('con.closeTitle')}
+          description={confirming.estado === 'suspendido' ? t('con.suspendBody') : confirming.estado === 'archivado' ? t('con.closeBody') : t('con.closeBody')}
           busy={busy}
           onClose={() => setConfirming(null)}
           actions={[{
-            label: confirming.estado === 'suspendido' ? t('con.confirmSuspend') : t('con.confirmClose'),
+            label: confirming.estado === 'suspendido' ? t('con.confirmSuspend') : confirming.estado === 'archivado' ? t('archive.action') : t('con.confirmClose'),
             destructive: true,
             onConfirm: () => setEstado(confirming.contrato, confirming.estado)
           }]}

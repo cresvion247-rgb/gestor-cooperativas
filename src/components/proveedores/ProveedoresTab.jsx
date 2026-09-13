@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import DataTable from '@/components/erp/DataTable';
+import ArchiveTabs from '@/components/erp/ArchiveTabs';
 import ConfirmDialog from '@/components/erp/ConfirmDialog';
 import ProveedorDialog from '@/components/proveedores/ProveedorDialog';
 import { Button } from '@/components/ui/button';
@@ -12,9 +13,8 @@ import { Plus } from 'lucide-react';
 import { logAudit } from '@/lib/audit';
 import { useI18n } from '@/lib/i18n';
 import { isCoopStaff } from '@/lib/permissions';
+import { archiveCounts, filterByArchiveTab, isProveedorArchived } from '@/lib/archive';
 
-// Homologación de proveedores: candidato → homologado → suspendido,
-// con auditoría de cada cambio de estado.
 export default function ProveedoresTab() {
   const { t, st } = useI18n();
   const { user } = useAuth();
@@ -25,13 +25,19 @@ export default function ProveedoresTab() {
   const { data: proveedores = [], isLoading } = useQuery({ queryKey: ['proveedores'], queryFn: () => base44.entities.Proveedor.list('-created_date', 500) });
 
   const [coopFilter, setCoopFilter] = useState('todas');
+  const [tab, setTab] = useState('active');
   const [dialog, setDialog] = useState(null);
   const [confirming, setConfirming] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const staff = isCoopStaff(user);
   const coopOf = p => coops.find(c => c.id === p.cooperativa_id);
-  const rows = proveedores.filter(p => coopFilter === 'todas' || p.cooperativa_id === coopFilter);
+  const scoped = useMemo(
+    () => proveedores.filter(p => coopFilter === 'todas' || p.cooperativa_id === coopFilter),
+    [proveedores, coopFilter],
+  );
+  const counts = useMemo(() => archiveCounts(scoped, isProveedorArchived), [scoped]);
+  const rows = useMemo(() => filterByArchiveTab(scoped, tab, isProveedorArchived), [scoped, tab]);
 
   const auditActionFor = (estado) =>
     estado === 'homologado' ? 'proveedor_homologado' : estado === 'suspendido' ? 'proveedor_suspendido' : 'proveedor_actualizado';
@@ -53,6 +59,8 @@ export default function ProveedoresTab() {
       qc.invalidateQueries({ queryKey: ['proveedores'] });
       toast({ title: t(msgKey) });
       setConfirming(null);
+      if (estado === 'suspendido') setTab('archived');
+      if (estado === 'homologado' && proveedor.estado === 'suspendido') setTab('active');
     } catch (e) {
       toast({ title: t('prov.updateFailed'), description: String(e?.message || e), variant: 'destructive' });
     }
@@ -61,6 +69,7 @@ export default function ProveedoresTab() {
 
   return (
     <>
+      <ArchiveTabs value={tab} onChange={setTab} activeCount={counts.active} archivedCount={counts.archived} />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-slate-600">{t('users.cooperative')}</label>
@@ -74,7 +83,7 @@ export default function ProveedoresTab() {
             </SelectContent>
           </Select>
         </div>
-        {staff && (
+        {staff && tab === 'active' && (
           <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setDialog('new')}>
             <Plus className="mr-1.5 h-4 w-4" />{t('prov.action')}
           </Button>
@@ -90,15 +99,19 @@ export default function ProveedoresTab() {
           { key: 'estado', label: t('common.status'), badge: true },
           { key: 'acciones', label: '', render: (_, p) => staff ? (
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={() => setDialog(p)}>{t('common.edit')}</Button>
-              {p.estado === 'candidato' && (
-                <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" disabled={busy} onClick={() => setEstado(p, 'homologado', 'prov.homologated')}>{t('prov.homologate')}</Button>
+              {tab === 'active' && (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => setDialog(p)}>{t('common.edit')}</Button>
+                  {p.estado === 'candidato' && (
+                    <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" disabled={busy} onClick={() => setEstado(p, 'homologado', 'prov.homologated')}>{t('prov.homologate')}</Button>
+                  )}
+                  {p.estado === 'homologado' && (
+                    <Button variant="outline" size="sm" className="text-amber-700 hover:bg-amber-50" onClick={() => setConfirming(p)}>{t('archive.action')}</Button>
+                  )}
+                </>
               )}
-              {p.estado === 'homologado' && (
-                <Button variant="outline" size="sm" className="text-amber-700 hover:bg-amber-50" onClick={() => setConfirming(p)}>{t('prov.suspend')}</Button>
-              )}
-              {p.estado === 'suspendido' && (
-                <Button size="sm" variant="outline" disabled={busy} onClick={() => setEstado(p, 'homologado', 'prov.reactivated')}>{t('prov.reactivate')}</Button>
+              {tab === 'archived' && p.estado === 'suspendido' && (
+                <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" disabled={busy} onClick={() => setEstado(p, 'homologado', 'archive.restored')}>{t('archive.unarchive')}</Button>
               )}
             </div>
           ) : null }
@@ -111,7 +124,7 @@ export default function ProveedoresTab() {
           description={t('prov.suspendBody')}
           busy={busy}
           onClose={() => setConfirming(null)}
-          actions={[{ label: t('prov.confirmSuspend'), destructive: true, onConfirm: () => setEstado(confirming, 'suspendido', 'prov.updated') }]}
+          actions={[{ label: t('archive.action'), destructive: true, onConfirm: () => setEstado(confirming, 'suspendido', 'archive.done') }]}
         />
       )}
     </>

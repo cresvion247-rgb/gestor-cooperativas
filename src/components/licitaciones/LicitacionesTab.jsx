@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import DataTable from '@/components/erp/DataTable';
+import ArchiveTabs from '@/components/erp/ArchiveTabs';
 import LicitacionDialog from '@/components/licitaciones/LicitacionDialog';
 import OfertasPanel from '@/components/licitaciones/OfertasPanel';
 import OfertaDialog from '@/components/licitaciones/OfertaDialog';
@@ -14,6 +15,7 @@ import { notifyCooperative } from '@/lib/notify';
 import { useI18n } from '@/lib/i18n';
 import { isCoopStaff } from '@/lib/permissions';
 import { formatEur, formatDate } from '@/lib/format';
+import { archiveCounts, filterByArchiveTab, isLicitacionArchived } from '@/lib/archive';
 
 export default function LicitacionesTab() {
   const { t } = useI18n();
@@ -27,18 +29,20 @@ export default function LicitacionesTab() {
   const { data: ofertas = [] } = useQuery({ queryKey: ['ofertas'], queryFn: () => base44.entities.Oferta.list('-created_date', 500) });
 
   const [selected, setSelected] = useState(null);
-  const [dialog, setDialog] = useState(null); // 'new' | licitacion
+  const [dialog, setDialog] = useState(null);
   const [bidDialog, setBidDialog] = useState(false);
   const [awardDialog, setAwardDialog] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState('active');
 
   const staff = isCoopStaff(user);
   const proyectoOf = l => proyectos.find(p => p.id === l.proyecto_id);
   const proveedorOf = l => proveedores.find(p => p.id === l.proveedor_adjudicado_id);
   const ofertasDe = l => ofertas.filter(o => o.licitacion_id === l.id);
 
-  // Adjudicación: marca la licitación, crea la solicitud de contrato vinculada
-  // al proveedor ganador y avisa a la cooperativa.
+  const counts = useMemo(() => archiveCounts(licitaciones, isLicitacionArchived), [licitaciones]);
+  const rows = useMemo(() => filterByArchiveTab(licitaciones, tab, isLicitacionArchived), [licitaciones, tab]);
+
   const award = async (licitacion, oferta) => {
     setBusy(true);
     try {
@@ -74,17 +78,40 @@ export default function LicitacionesTab() {
       toast({ title: t('lic.awarded') });
       setAwardDialog(false);
       setSelected(null);
+      setTab('archived');
     } catch (e) {
       toast({ title: t('lic.awardFailed'), description: String(e?.message || e), variant: 'destructive' });
     }
     setBusy(false);
   };
 
+  const setEstado = async (l, estado) => {
+    setBusy(true);
+    try {
+      await base44.entities.Licitacion.update(l.id, { estado });
+      await logAudit({
+        tenant_id: l.tenant_id,
+        accion: estado === 'cancelada' ? 'licitacion_archivada' : 'licitacion_reactivada',
+        entidad_tipo: 'Licitacion',
+        entidad_id: l.id,
+        valores_anteriores: { estado: l.estado },
+        valores_nuevos: { estado },
+      });
+      qc.invalidateQueries({ queryKey: ['licitaciones'] });
+      toast({ title: t(estado === 'cancelada' ? 'archive.done' : 'archive.restored') });
+      setTab(estado === 'cancelada' ? 'archived' : 'active');
+    } catch (e) {
+      toast({ title: t('archive.failed'), description: String(e?.message || e), variant: 'destructive' });
+    }
+    setBusy(false);
+  };
+
   return (
     <>
+      <ArchiveTabs value={tab} onChange={(v) => { setTab(v); setSelected(null); }} activeCount={counts.active} archivedCount={counts.archived} />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-slate-500">{t('module.proveedores.desc')}</p>
-        {staff && <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setDialog('new')}>{t('lic.action')}</Button>}
+        {staff && tab === 'active' && <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setDialog('new')}>{t('lic.action')}</Button>}
       </div>
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[
@@ -98,13 +125,24 @@ export default function LicitacionesTab() {
           { key: 'adjudicada', label: t('lic.col.awarded'), render: (_, l) => proveedorOf(l)?.nombre || '—' },
           { key: 'acciones', label: '', render: (_, l) => staff ? (
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={() => setSelected(l)}>{t('common.manage')}</Button>
-              <Button variant="outline" size="sm" onClick={() => setDialog(l)}>{t('common.edit')}</Button>
+              {tab === 'active' && (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => setSelected(l)}>{t('common.manage')}</Button>
+                  <Button variant="outline" size="sm" onClick={() => setDialog(l)}>{t('common.edit')}</Button>
+                  <Button variant="outline" size="sm" disabled={busy} onClick={() => setEstado(l, 'cancelada')}>{t('archive.action')}</Button>
+                </>
+              )}
+              {tab === 'archived' && l.estado === 'cancelada' && (
+                <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" disabled={busy} onClick={() => setEstado(l, 'abierta')}>{t('archive.unarchive')}</Button>
+              )}
+              {tab === 'archived' && l.estado === 'adjudicada' && (
+                <Button variant="outline" size="sm" onClick={() => setSelected(l)}>{t('common.manage')}</Button>
+              )}
             </div>
           ) : null }
-        ]} rows={licitaciones} />
+        ]} rows={rows} />
       )}
-      {selected && (
+      {selected && tab === 'active' && (
         <div className="mt-4">
           <OfertasPanel
             licitacion={selected}

@@ -30,3 +30,14 @@ export const isDocumentoSocioArchived = (d) =>
 /** Legal documents: archivado or caducado */
 export const isDocumentoLegalArchived = (d) =>
   d?.estado === 'archivado' || d?.estado === 'caducado';
+
+/** Suppliers: suspended leave the live roster */
+export const isProveedorArchived = (p) => p?.estado === 'suspendido';
+
+/** Tenders: awarded or cancelled */
+export const isLicitacionArchived = (l) =>
+  l?.estado === 'adjudicada' || l?.estado === 'cancelada';
+
+/** Contracts: closed / archived / terminal */
+export const isContratoArchived = (c) =>
+  ['cerrado', 'archivado', 'vencido', 'resuelto'].includes(c?.estado);
