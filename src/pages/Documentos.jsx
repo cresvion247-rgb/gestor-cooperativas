@@ -137,6 +137,18 @@ export default function Documentos() {
             : (limited && memberUploadSocio ? () => setUploadTarget({ new: true }) : undefined)
         }
       />
+      <div className="mb-4 flex flex-wrap gap-2">
+        {staff && (
+          <Button className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setRequestOpen(true)}>
+            {t('doc.requestAction')}
+          </Button>
+        )}
+        {limited && memberUploadSocio && (
+          <Button className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setUploadTarget({ new: true })}>
+            {t('doc.uploadAction')}
+          </Button>
+        )}
+      </div>
       <Tabs defaultValue="socios">
         <TabsList className="mb-4">
           <TabsTrigger value="socios">{t('doc.tabSocios')}</TabsTrigger>
