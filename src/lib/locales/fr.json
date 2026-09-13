@@ -88,7 +88,7 @@
   "admin.title": "Gouvernance du système",
   "admin.desc": "Utilisateurs, rôles, affectations de coopératives et registre d'audit immuable.",
   "admin.restricted": "Accès restreint",
-  "admin.restrictedDesc": "Cette zone est réservée au Super Admin d'Urbalex.",
+  "admin.restrictedDesc": "Cette zone est réservée aux Super Admins de la plateforme. Connectez-vous avec un compte administrateur pour continuer.",
   "admin.tabUsers": "Utilisateurs et rôles",
   "admin.tabAudit": "Registre d'audit",
   "users.inviteTitle": "Inviter un utilisateur",
@@ -616,5 +616,8 @@
   "users.adminGrantHint": "Choisissez « super admin urbalex » ou « administrateur urbalex » pour donner l’accès Administration (sans SQL).",
   "users.inviteLinkCopied": "Lien d’invitation copié — envoyez-le si l’e-mail n’arrive pas.",
   "users.inviteEmailSent": "Ils devraient recevoir un e-mail pour définir leur mot de passe.",
-  "users.inviteDeployHint": "Déployez la Edge Function invitar_usuario dans Supabase (voir DEPLOY.md), puis réessayez. Ou Ouvrir Gérer sur un utilisateur existant et définir Super Admin."
+  "users.inviteDeployHint": "Déployez la Edge Function invitar_usuario dans Supabase (voir DEPLOY.md), puis réessayez. Ou Ouvrir Gérer sur un utilisateur existant et définir Super Admin.",
+  "admin.signInAdmin": "Se connecter en tant qu’admin",
+  "admin.signOut": "Se déconnecter",
+  "admin.signedInAs": "Connecté en tant que"
 }

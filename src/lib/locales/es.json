@@ -88,7 +88,7 @@
   "admin.title": "Gobierno del sistema",
   "admin.desc": "Usuarios, roles, asignaciones de cooperativa y registro de auditoría inmutable.",
   "admin.restricted": "Acceso restringido",
-  "admin.restrictedDesc": "Esta área está reservada al Super Admin de Urbalex.",
+  "admin.restrictedDesc": "Esta área está reservada a los Super Admins de la plataforma. Inicia sesión con una cuenta de administrador para continuar.",
   "admin.tabUsers": "Usuarios y roles",
   "admin.tabAudit": "Registro de auditoría",
   "users.inviteTitle": "Invitar usuario",
@@ -616,5 +616,8 @@
   "users.adminGrantHint": "Elige “superadmin urbalex” o “administrador urbalex” para dar acceso a Administración (sin SQL).",
   "users.inviteLinkCopied": "Enlace de invitación copiado — envíaselo si no llega el correo.",
   "users.inviteEmailSent": "Deberían recibir un correo para establecer su contraseña.",
-  "users.inviteDeployHint": "Despliega la Edge Function invitar_usuario en Supabase (ver DEPLOY.md) y reintenta. O abre Gestionar en un usuario existente y ponle perfil Super Admin."
+  "users.inviteDeployHint": "Despliega la Edge Function invitar_usuario en Supabase (ver DEPLOY.md) y reintenta. O abre Gestionar en un usuario existente y ponle perfil Super Admin.",
+  "admin.signInAdmin": "Iniciar sesión como admin",
+  "admin.signOut": "Cerrar sesión",
+  "admin.signedInAs": "Sesión iniciada como"
 }

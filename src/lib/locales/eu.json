@@ -88,7 +88,7 @@
   "admin.title": "Sistemaren gobernua",
   "admin.desc": "Erabiltzaileak, rolak, kooperatiba-esleipenak eta auditoretza-erregistro aldaezina.",
   "admin.restricted": "Sarbidea mugatua",
-  "admin.restrictedDesc": "Area hau Urbalexeko Super Adminarentzat da.",
+  "admin.restrictedDesc": "Area hau plataformako Super Adminentzat da. Jarraitzeko, hasi saioa administratzaile-kontu batekin.",
   "admin.tabUsers": "Erabiltzaileak eta rolak",
   "admin.tabAudit": "Auditoretza-erregistroa",
   "users.inviteTitle": "Erabiltzailea gonbidatu",
@@ -616,5 +616,8 @@
   "users.adminGrantHint": "Aukeratu “urbalex super administratzailea” edo “urbalex administratzailea” Administrazioa emateko (SQLrik gabe).",
   "users.inviteLinkCopied": "Gonbidapen-esteka kopiatuta — bidali iezaiozu postarik iristen ez bada.",
   "users.inviteEmailSent": "Pasahitza ezartzeko mezu bat jaso beharko lukete.",
-  "users.inviteDeployHint": "Deploy egin invitar_usuario Edge Function Supabase-n (ikusi DEPLOY.md) eta saiatu berriro. Edo kudeatu erabiltzaile bat eta jarri Super Admin profila."
+  "users.inviteDeployHint": "Deploy egin invitar_usuario Edge Function Supabase-n (ikusi DEPLOY.md) eta saiatu berriro. Edo kudeatu erabiltzaile bat eta jarri Super Admin profila.",
+  "admin.signInAdmin": "Hasi saioa admin gisa",
+  "admin.signOut": "Itxi saioa",
+  "admin.signedInAs": "Saioa hasita:"
 }

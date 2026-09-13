@@ -88,7 +88,7 @@
   "admin.title": "System governance",
   "admin.desc": "Users, roles, cooperative assignments and the immutable audit log.",
   "admin.restricted": "Access restricted",
-  "admin.restrictedDesc": "This area is reserved for the Urbalex Super Admin.",
+  "admin.restrictedDesc": "This area is reserved for platform Super Admins. Sign in with an admin account to continue.",
   "admin.tabUsers": "Users and roles",
   "admin.tabAudit": "Audit log",
   "users.inviteTitle": "Invite user",
@@ -616,5 +616,8 @@
   "users.adminGrantHint": "Choose “Urbalex super admin” or “Urbalex administrator” to grant Administration access (no SQL).",
   "users.inviteLinkCopied": "Invite link copied — send it to them if email did not arrive.",
   "users.inviteEmailSent": "They should receive an email to set their password.",
-  "users.inviteDeployHint": "Deploy the invitar_usuario Edge Function in Supabase (see DEPLOY.md), then try again. Or open Manage on an existing user and set their profile to Super Admin."
+  "users.inviteDeployHint": "Deploy the invitar_usuario Edge Function in Supabase (see DEPLOY.md), then try again. Or open Manage on an existing user and set their profile to Super Admin.",
+  "admin.signInAdmin": "Sign in as admin",
+  "admin.signOut": "Sign out",
+  "admin.signedInAs": "Currently signed in as"
 }
