@@ -7,6 +7,7 @@ import DataTable from '@/components/erp/DataTable';
 import ConfirmDialog from '@/components/erp/ConfirmDialog';
 import CooperativaDialog from '@/components/erp/cooperativas/CooperativaDialog';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { logAudit } from '@/lib/audit';
 import { useI18n } from '@/lib/i18n';
@@ -60,9 +61,16 @@ export default function Cooperativas() {
       />
       <div className="mb-4 flex items-center gap-3">
         <label className="text-sm font-medium text-slate-600">{t('common.status')}</label>
-        <select value={filter} onChange={e => setFilter(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm">
-          {ESTADOS.map(e => <option key={e} value={e}>{e === 'todas' ? t('audit.all') : st(e)}</option>)}
-        </select>
+        <Select value={filter} onValueChange={setFilter}>
+          <SelectTrigger className="h-9 w-[11.5rem] rounded-xl border-slate-200 bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {ESTADOS.map(e => (
+              <SelectItem key={e} value={e}>{e === 'todas' ? t('audit.all') : st(e)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[
@@ -74,7 +82,7 @@ export default function Cooperativas() {
           { key: 'acciones', label: '', render: (_, c) => (
             <div className="flex gap-2">
               {canEdit(c) && <Button variant="outline" size="sm" onClick={() => setDialog(c)}>{t('common.edit')}</Button>}
-              {admin && c.estado !== 'cerrada' && <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => setConfirming(c)}>{t('coop.deactivate')}</Button>}
+              {admin && c.estado !== 'cerrada' && <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => setConfirming(c)}>{t('coop.deactivate')}</Button>}
             </div>
           )}
         ]} rows={rows} />
