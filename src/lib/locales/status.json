@@ -11,7 +11,8 @@
     "consejo_rector": "consejo rector",
     "socio_cooperativista": "socio cooperativista",
     "tecnico_externo": "técnico externo",
-    "proveedor_externo": "proveedor externo"
+    "proveedor_externo": "proveedor externo",
+    "solicitado": "solicitado"
   },
   "en": {
     "activa": "active",
@@ -94,7 +95,8 @@
     "consejo_rector": "governing board",
     "socio_cooperativista": "cooperative member",
     "tecnico_externo": "external technician",
-    "proveedor_externo": "external supplier"
+    "proveedor_externo": "external supplier",
+    "solicitado": "requested"
   },
   "eu": {
     "activa": "aktibo",
@@ -177,7 +179,8 @@
     "consejo_rector": "zuzendaritza-kontseilua",
     "socio_cooperativista": "kide kooperatibista",
     "tecnico_externo": "kanpoko teknikaria",
-    "proveedor_externo": "kanpoko hornitzailea"
+    "proveedor_externo": "kanpoko hornitzailea",
+    "solicitado": "eskatuta"
   },
   "fr": {
     "activa": "active",
@@ -260,6 +263,7 @@
     "consejo_rector": "conseil d'administration",
     "socio_cooperativista": "membre coopérateur",
     "tecnico_externo": "technicien externe",
-    "proveedor_externo": "fournisseur externe"
+    "proveedor_externo": "fournisseur externe",
+    "solicitado": "demandé"
   }
 }

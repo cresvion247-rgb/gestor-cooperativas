@@ -617,10 +617,10 @@ create table public.documentos_socio (
   tipo text not null
     check (tipo in ('dni_nie', 'justificante_ingresos', 'declaracion_jurada', 'contrato_firmado', 'otro')),
   nombre text,
-  file_uri text not null,
+  file_uri text, -- null while estado = solicitado (staff checklist request)
   subido_por_email text,
   estado text not null default 'subido'
-    check (estado in ('subido', 'verificado', 'rechazado')),
+    check (estado in ('solicitado', 'subido', 'verificado', 'rechazado')),
   fecha_revision date,
   motivo_rechazo text,
   created_at timestamptz not null default now(),

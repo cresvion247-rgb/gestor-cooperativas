@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { UserRound, Home as HomeIcon, Wallet, FileText, Bell } from 'lucide-react';
 import ConciergeButton from '@/components/concierge/ConciergeButton';
+import UploadDocumentoDialog from '@/components/documentos/UploadDocumentoDialog';
 
 const Section = ({ icon: Icon, title, children }) => (
   <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -25,6 +26,7 @@ export default function PortalSocio() {
   const { t, st } = useI18n();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [uploadTarget, setUploadTarget] = useState(null);
 
   const socioQ = useQuery({ queryKey: ['portal-socio', user?.email], queryFn: () => findMySocio(user?.email), enabled: Boolean(user?.email) });
   const socio = socioQ.data;
@@ -93,18 +95,41 @@ export default function PortalSocio() {
             </div>
           </Section>
           <Section icon={FileText} title={t('portal.docs')}>
+            <div className="mb-3 flex justify-end">
+              {coop && (
+                <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setUploadTarget({ new: true })}>
+                  {t('doc.uploadAction')}
+                </Button>
+              )}
+            </div>
             {(docsQ.data || []).length === 0 ? <p className="text-sm text-slate-500">{t('portal.noDocs')}</p> : (
               <ul className="divide-y divide-slate-100">
                 {(docsQ.data || []).map(d => (
                   <li key={d.id} className="flex items-center justify-between gap-3 py-2">
                     <div className="min-w-0">
                       <p className="break-words text-sm font-medium text-slate-900">{d.nombre || t(`doc.${d.tipo}`)}</p>
-                      <p className="text-xs text-slate-500">{t(`doc.${d.tipo}`)} · {formatDate(d.created_date)}</p>
+                      <p className="text-xs text-slate-500">{t(`doc.${d.tipo}`)} · <StatusBadge value={d.estado} /></p>
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => viewDoc(d)}>{t('portal.viewDoc')}</Button>
+                    <div className="flex shrink-0 gap-2">
+                      {d.estado === 'solicitado' || d.estado === 'rechazado' ? (
+                        <Button size="sm" className="bg-teal-700 hover:bg-teal-800" onClick={() => setUploadTarget({ request: d })}>
+                          {t('doc.uploadFulfill')}
+                        </Button>
+                      ) : d.file_uri ? (
+                        <Button variant="outline" size="sm" onClick={() => viewDoc(d)}>{t('portal.viewDoc')}</Button>
+                      ) : null}
+                    </div>
                   </li>
                 ))}
               </ul>
+            )}
+            {uploadTarget && socio && coop && (
+              <UploadDocumentoDialog
+                socio={socio}
+                cooperativa={coop}
+                request={uploadTarget.request || null}
+                onClose={() => setUploadTarget(null)}
+              />
             )}
           </Section>
         </div>
