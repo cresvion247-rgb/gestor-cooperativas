@@ -41,3 +41,12 @@ export const isLicitacionArchived = (l) =>
 /** Contracts: closed / archived / terminal */
 export const isContratoArchived = (c) =>
   ['cerrado', 'archivado', 'vencido', 'resuelto'].includes(c?.estado);
+
+/** Developments: closed phase */
+export const isProyectoArchived = (p) => p?.estado === 'cerrado';
+
+/** Planning files: terminal/closed-like statuses */
+export const isExpedienteArchived = (e) =>
+  ['cerrado', 'resuelto', 'archivado', 'denegado', 'caducado', 'favorable'].includes(
+    String(e?.estado || '').toLowerCase(),
+  );
