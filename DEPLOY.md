@@ -254,3 +254,7 @@ npm run preview
 ```
 
 Never run a second undocumented backend for this frontend. The only APIs the UI calls are Supabase REST/Auth/Storage and (optionally) `supabase.functions.invoke` for the stubs in `src/lib/notify.js`.
+
+### Trial seed
+
+Optional demo cooperative: run `supabase/seed_trial_cooperativa.sql` in the SQL Editor (creates tenant `demo-trial` / CIF `B00000000`).
