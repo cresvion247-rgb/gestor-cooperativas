@@ -9,6 +9,7 @@ import SocioDialog from '@/components/socios/SocioDialog';
 import SocioDetailDialog from '@/components/socios/SocioDetailDialog';
 import AdjudicacionDialog from '@/components/socios/AdjudicacionDialog';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { logAudit } from '@/lib/audit';
 import { useI18n } from '@/lib/i18n';
@@ -82,16 +83,28 @@ export default function Socios() {
       <div className="mb-4 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-slate-600">{t('users.cooperative')}</label>
-          <select value={coopFilter} onChange={e => setCoopFilter(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm">
-            <option value="todas">{t('common.all')}</option>
-            {coops.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-          </select>
+          <Select value={coopFilter} onValueChange={setCoopFilter}>
+            <SelectTrigger className="h-9 w-[14rem] rounded-xl border-slate-200 bg-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todas">{t('common.all')}</SelectItem>
+              {coops.map(c => <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-slate-600">{t('common.status')}</label>
-          <select value={estadoFilter} onChange={e => setEstadoFilter(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm">
-            {ESTADOS.map(e => <option key={e} value={e}>{e === 'todos' ? t('common.all') : st(e)}</option>)}
-          </select>
+          <Select value={estadoFilter} onValueChange={setEstadoFilter}>
+            <SelectTrigger className="h-9 w-[11.5rem] rounded-xl border-slate-200 bg-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ESTADOS.map(e => (
+                <SelectItem key={e} value={e}>{e === 'todos' ? t('common.all') : st(e)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
@@ -103,9 +116,11 @@ export default function Socios() {
           { key: 'estado', label: t('common.status'), badge: true },
           { key: 'pendiente', label: t('fin.col.pending'), render: (_, s) => formatEur(pendingOf(s), true) },
           { key: 'acciones', label: '', render: (_, s) => (
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={() => setDialog({ type: 'detail', socio: s })}>{t('common.manage')}</Button>
-              {staff && <Button variant="outline" size="sm" onClick={() => setDialog({ type: 'edit', socio: s })}>{t('common.edit')}</Button>}
+            <div className="flex flex-col items-start gap-1.5">
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => setDialog({ type: 'detail', socio: s })}>{t('common.manage')}</Button>
+                {staff && <Button variant="outline" size="sm" onClick={() => setDialog({ type: 'edit', socio: s })}>{t('common.edit')}</Button>}
+              </div>
               {staff && s.estado === 'activo' && !s.vivienda_id && (
                 <Button variant="outline" size="sm" onClick={() => setDialog({ type: 'allocate', socio: s })}>{t('soc.allocate')}</Button>
               )}
@@ -113,7 +128,7 @@ export default function Socios() {
                 <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => changeEstado(s, 'activo')}>{t('soc.admit')}</Button>
               )}
               {staff && s.estado === 'activo' && (
-                <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => setConfirming(s)}>{t('soc.baja')}</Button>
+                <Button variant="ghost" size="sm" className="h-8 px-2 text-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => setConfirming(s)}>{t('soc.baja')}</Button>
               )}
             </div>
           )}
