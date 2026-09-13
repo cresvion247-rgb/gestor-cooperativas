@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { useI18n } from '@/lib/i18n';
 
@@ -42,11 +43,15 @@ export default function ComunicacionDialog({ cooperativas, onSave, onClose }) {
         <DialogHeader><DialogTitle>{t('comm.newTitle')}</DialogTitle></DialogHeader>
         <div className="grid gap-4">
           <div>
-            <Label className="mb-1">{t('fin.f.coop')} *</Label>
-            <select value={coopId} onChange={e => setCoopId(e.target.value)} className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm">
-              <option value="">—</option>
-              {cooperativas.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <Label className="mb-1">{t('users.cooperative')} *</Label>
+            <Select value={coopId || undefined} onValueChange={setCoopId}>
+              <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50">
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                {cooperativas.map(c => <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label className="mb-1">{t('inc.f.title')} *</Label>
@@ -59,9 +64,16 @@ export default function ComunicacionDialog({ cooperativas, onSave, onClose }) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label className="mb-1">{t('comm.f.priority')}</Label>
-              <select value={form.prioridad} onChange={e => set('prioridad', e.target.value)} className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm">
-                {PRIORIDADES.map(p => <option key={p} value={p}>{st(p)}</option>)}
-              </select>
+              <Select value={form.prioridad} onValueChange={v => set('prioridad', v)}>
+                <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRIORIDADES.map(p => (
+                    <SelectItem key={p} value={p}>{st(({ baja: 'bajo', media: 'medio', alta: 'alto', critica: 'critico' })[p] || p)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label className="mb-1">{t('common.deadline')}</Label>

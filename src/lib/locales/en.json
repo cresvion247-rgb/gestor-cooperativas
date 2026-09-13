@@ -610,5 +610,7 @@
   "concierge.listening": "Listening… tap to stop",
   "concierge.speakOn": "Turn off spoken replies",
   "concierge.speakOff": "Turn on spoken replies",
-  "con.f.title": "Title"
+  "con.f.title": "Title",
+  "comm.col.title": "Title",
+  "comm.col.type": "Type"
 }

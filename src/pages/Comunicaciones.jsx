@@ -69,8 +69,8 @@ export default function Comunicaciones() {
       />
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[
-          { key: 'titulo', label: t('inc.f.title') },
-          { key: 'tipo', label: t('fin.f.type') },
+          { key: 'titulo', label: t('comm.col.title') },
+          { key: 'tipo', label: t('comm.col.type') },
           { key: 'prioridad', label: t('comm.f.priority'), badge: true },
           { key: 'fecha_limite', label: t('common.deadline'), render: formatDate },
           { key: 'estado', label: t('common.status'), badge: true },

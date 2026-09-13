@@ -610,5 +610,7 @@
   "concierge.listening": "Entzuten… sakatu gelditzeko",
   "concierge.speakOn": "Desaktibatu ahots-erantzunak",
   "concierge.speakOff": "Aktibatu ahots-erantzunak",
-  "con.f.title": "Izenburua"
+  "con.f.title": "Izenburua",
+  "comm.col.title": "Izenburua",
+  "comm.col.type": "Mota"
 }

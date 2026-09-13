@@ -610,5 +610,7 @@
   "concierge.listening": "Escuchando… pulsa para detener",
   "concierge.speakOn": "Desactivar respuestas habladas",
   "concierge.speakOff": "Activar respuestas habladas",
-  "con.f.title": "Título"
+  "con.f.title": "Título",
+  "comm.col.title": "Título",
+  "comm.col.type": "Tipo"
 }
