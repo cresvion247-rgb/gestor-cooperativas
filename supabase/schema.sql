@@ -561,7 +561,7 @@ create table public.alertas (
     check (prioridad in ('baja', 'media', 'alta', 'critica')),
   fecha_limite date,
   estado text not null
-    check (estado in ('abierta', 'en_gestion', 'resuelta')),
+    check (estado in ('abierta', 'en_gestion', 'resuelta', 'archivado')),
   entidad_tipo text,
   entidad_id text,
   created_at timestamptz not null default now(),

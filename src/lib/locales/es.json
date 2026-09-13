@@ -648,5 +648,12 @@
   "doc.uploadNeedFile": "Elige un archivo",
   "doc.uploadNeedSocio": "No hay expediente de socio vinculado a esta cuenta",
   "doc.uploaded": "Documento subido",
-  "doc.noFileYet": "Aún no hay archivo — sigue solicitado"
+  "doc.noFileYet": "Aún no hay archivo — sigue solicitado",
+  "archive.active": "Activos",
+  "archive.archived": "Archivados",
+  "archive.action": "Archivar",
+  "archive.unarchive": "Reactivar",
+  "archive.done": "Archivado",
+  "archive.restored": "Reactivado",
+  "archive.failed": "No se pudo cambiar el archivo"
 }

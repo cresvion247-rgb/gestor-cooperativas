@@ -45,7 +45,8 @@ cp .env.example .env.local
    - Creates extensions, helper functions (`is_platform_admin`, `can_access_tenant`, `can_mutate_tenant`), `public.profiles` + trigger from `auth.users`, all domain tables, RLS policies, and grants.
    - Storage **policies at the bottom are commented**. Uncomment and run them **after** the buckets exist (section 3).
 3. Do not re-run the whole file blindly on a live database (it is a create-once script, not a migration chain). Subsequent changes should be additive SQL.
-4. For member document uploads + staff checklist requests, run **`supabase/documentos_checklist_patch.sql`** once (makes `file_uri` nullable and adds `solicitado` status).
+4. For member document uploads + staff checklist requests, run **`supabase/documentos_checklist_patch.sql`** once
+5. For Communications archive (`archivado` on alertas), run **`supabase/archive_wave1_patch.sql`** once (makes `file_uri` nullable and adds `solicitado` status).
 5. If the project already ran an older `schema.sql`, run **`supabase/rls_form_fixes.sql`** in the SQL Editor (safe to re-run). It expands platform-admin helpers so `app_role` values `super_admin_urbalex` / `administrador_urbalex` can mutate (including `audit_logs`), even when `profiles.role` is still `user`.
 
 After the first user signs up, promote a platform Super Admin by setting `public.profiles.role = 'admin'` **and** `app_role = 'super_admin_urbalex'` for that `id` (Dashboard → Table Editor or SQL). Until then, tenant RLS will hide most rows from an ordinary `user`. Forms that write audit rows to `urbalex-central` also need one of those platform roles (or an assigned cooperative tenant).

@@ -648,5 +648,12 @@
   "doc.uploadNeedFile": "Choisissez un fichier",
   "doc.uploadNeedSocio": "Aucun dossier membre lié à ce compte",
   "doc.uploaded": "Document téléversé",
-  "doc.noFileYet": "Pas encore de fichier — toujours demandé"
+  "doc.noFileYet": "Pas encore de fichier — toujours demandé",
+  "archive.active": "Actifs",
+  "archive.archived": "Archivés",
+  "archive.action": "Archiver",
+  "archive.unarchive": "Réactiver",
+  "archive.done": "Archivé",
+  "archive.restored": "Réactivé",
+  "archive.failed": "Impossible de modifier l’archivage"
 }

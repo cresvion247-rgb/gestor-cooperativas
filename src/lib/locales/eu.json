@@ -648,5 +648,12 @@
   "doc.uploadNeedFile": "Aukeratu fitxategi bat",
   "doc.uploadNeedSocio": "Kontu honi ez zaio bazkide-espedienterik lotu",
   "doc.uploaded": "Dokumentua igota",
-  "doc.noFileYet": "Oraindik ez dago fitxategirik — eskatuta dago"
+  "doc.noFileYet": "Oraindik ez dago fitxategirik — eskatuta dago",
+  "archive.active": "Aktiboak",
+  "archive.archived": "Artxibatuak",
+  "archive.action": "Artxibatu",
+  "archive.unarchive": "Berriro aktibatu",
+  "archive.done": "Artxibatuta",
+  "archive.restored": "Berriro aktibatuta",
+  "archive.failed": "Ezin izan da artxibo-egoera aldatu"
 }

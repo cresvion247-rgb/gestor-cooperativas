@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import PageHeader from '@/components/erp/PageHeader';
 import DataTable from '@/components/erp/DataTable';
+import ArchiveTabs from '@/components/erp/ArchiveTabs';
 import ComunicacionDialog from '@/components/comunicaciones/ComunicacionDialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -12,11 +13,10 @@ import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/AuthContext';
 import { isCoopStaff } from '@/lib/permissions';
 import { formatDate } from '@/lib/format';
+import { archiveCounts, filterByArchiveTab, isAlertaArchived } from '@/lib/archive';
 
-// Comunicaciones: bandeja de alertas de las cooperativas con gestión de estado
-// y difusión de comunicados (alerta en la app + email a los usuarios).
 export default function Comunicaciones() {
-  const { t, st } = useI18n();
+  const { t } = useI18n();
   const { user } = useAuth();
   const qc = useQueryClient();
   const { toast } = useToast();
@@ -27,17 +27,28 @@ export default function Comunicaciones() {
 
   const [dialog, setDialog] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState('active');
 
-  const advance = async (a, estado) => {
+  const counts = useMemo(() => archiveCounts(alertas, isAlertaArchived), [alertas]);
+  const rows = useMemo(() => filterByArchiveTab(alertas, tab, isAlertaArchived), [alertas, tab]);
+
+  const advance = async (a, estado, okKey = 'comm.alertUpdated') => {
     setBusy(true);
     try {
       await base44.entities.Alerta.update(a.id, { estado });
-      await logAudit({ tenant_id: a.tenant_id, accion: 'alerta_actualizada', entidad_tipo: 'Alerta', entidad_id: a.id, valores_anteriores: { estado: a.estado }, valores_nuevos: { estado } });
+      await logAudit({
+        tenant_id: a.tenant_id,
+        accion: estado === 'archivado' ? 'alerta_archivada' : (a.estado === 'archivado' ? 'alerta_reactivada' : 'alerta_actualizada'),
+        entidad_tipo: 'Alerta',
+        entidad_id: a.id,
+        valores_anteriores: { estado: a.estado },
+        valores_nuevos: { estado },
+      });
       qc.invalidateQueries({ queryKey: ['alertas'] });
       qc.invalidateQueries({ queryKey: ['dashboard'] });
-      toast({ title: t('comm.alertUpdated') });
+      toast({ title: t(okKey) });
     } catch (e) {
-      toast({ title: t('comm.alertFailed'), description: String(e?.message || e), variant: 'destructive' });
+      toast({ title: t('archive.failed'), description: String(e?.message || e), variant: 'destructive' });
     }
     setBusy(false);
   };
@@ -67,6 +78,7 @@ export default function Comunicaciones() {
         action={staff ? t('comm.action') : undefined}
         onAction={() => setDialog(true)}
       />
+      <ArchiveTabs value={tab} onChange={setTab} activeCount={counts.active} archivedCount={counts.archived} />
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[
           { key: 'titulo', label: t('comm.col.title') },
@@ -74,13 +86,21 @@ export default function Comunicaciones() {
           { key: 'prioridad', label: t('comm.f.priority'), badge: true },
           { key: 'fecha_limite', label: t('common.deadline'), render: formatDate },
           { key: 'estado', label: t('common.status'), badge: true },
-          { key: 'acciones', label: '', render: (_, a) => staff && a.estado !== 'resuelta' ? (
-            <div className="flex gap-2">
-              {a.estado === 'abierta' && <Button size="sm" variant="outline" disabled={busy} onClick={() => advance(a, 'en_gestion')}>{t('common.manage')}</Button>}
-              <Button size="sm" className="bg-teal-700 hover:bg-teal-800" disabled={busy} onClick={() => advance(a, 'resuelta')}>{t('comm.resolve')}</Button>
+          { key: 'acciones', label: '', render: (_, a) => staff ? (
+            <div className="flex flex-wrap gap-2">
+              {tab === 'active' && (
+                <>
+                  {a.estado === 'abierta' && <Button size="sm" variant="outline" disabled={busy} onClick={() => advance(a, 'en_gestion')}>{t('common.manage')}</Button>}
+                  {a.estado !== 'resuelta' && <Button size="sm" className="bg-teal-700 hover:bg-teal-800" disabled={busy} onClick={() => advance(a, 'resuelta')}>{t('comm.resolve')}</Button>}
+                  <Button size="sm" variant="outline" disabled={busy} onClick={() => advance(a, 'archivado', 'archive.done')}>{t('archive.action')}</Button>
+                </>
+              )}
+              {tab === 'archived' && (
+                <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" disabled={busy} onClick={() => advance(a, 'en_gestion', 'archive.restored')}>{t('archive.unarchive')}</Button>
+              )}
             </div>
           ) : null }
-        ]} rows={alertas} />
+        ]} rows={rows} />
       )}
       {dialog && <ComunicacionDialog cooperativas={cooperativas} onSave={send} onClose={() => setDialog(false)} />}
     </>

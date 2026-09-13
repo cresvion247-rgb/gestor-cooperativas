@@ -12,7 +12,8 @@
     "socio_cooperativista": "socio cooperativista",
     "tecnico_externo": "técnico externo",
     "proveedor_externo": "proveedor externo",
-    "solicitado": "solicitado"
+    "solicitado": "solicitado",
+    "archivado": "archivado"
   },
   "en": {
     "activa": "active",
@@ -134,7 +135,7 @@
     "suspendido": "etenda",
     "vencido": "iraungi",
     "resuelto": "amaitua",
-    "archivado": "artxibatua",
+    "archivado": "artxibatuta",
     "caducado": "iraungita",
     "pendiente": "zain",
     "parcial": "partziala",

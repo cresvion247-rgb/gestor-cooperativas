@@ -20,6 +20,7 @@ const tones = {
   bajo: 'bg-slate-100 text-slate-600',
   baja: 'bg-slate-100 text-slate-600',
   solicitado: 'bg-amber-50 text-amber-700',
+  archivado: 'bg-slate-100 text-slate-500',
   abierta: 'bg-blue-50 text-blue-700',
   en_gestion: 'bg-slate-100 text-slate-700',
   resuelta: 'bg-emerald-50 text-emerald-700'

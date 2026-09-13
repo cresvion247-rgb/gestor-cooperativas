@@ -648,5 +648,12 @@
   "doc.uploadNeedFile": "Choose a file",
   "doc.uploadNeedSocio": "No member record linked to this account",
   "doc.uploaded": "Document uploaded",
-  "doc.noFileYet": "No file yet — still requested"
+  "doc.noFileYet": "No file yet — still requested",
+  "archive.active": "Active",
+  "archive.archived": "Archived",
+  "archive.action": "Archive",
+  "archive.unarchive": "Restore",
+  "archive.done": "Archived",
+  "archive.restored": "Restored to active",
+  "archive.failed": "Could not update archive state"
 }
