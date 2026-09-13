@@ -676,5 +676,7 @@
   "prom.filter.clear": "Effacer les filtres",
   "prom.empty": "Aucune promotion pour le moment.",
   "prom.emptyFiltered": "Aucune promotion ne correspond à ces filtres.",
-  "prom.emptyCta": "Créer la première promotion"
+  "prom.emptyCta": "Créer la première promotion",
+  "prom.drawer.open": "Voir",
+  "prom.drawer.links": "Modules liés"
 }

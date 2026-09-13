@@ -5,6 +5,7 @@ import PageHeader from '@/components/erp/PageHeader';
 import DataTable from '@/components/erp/DataTable';
 import ArchiveTabs from '@/components/erp/ArchiveTabs';
 import ProyectoDialog from '@/components/promociones/ProyectoDialog';
+import ProyectoDrawer from '@/components/promociones/ProyectoDrawer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -47,6 +48,7 @@ export default function Promociones() {
   const [tab, setTab] = useState('active');
   const [busy, setBusy] = useState(false);
   const [dialog, setDialog] = useState(null);
+  const [drawer, setDrawer] = useState(null);
   const [coopFilter, setCoopFilter] = useState('todos');
   const [faseFilter, setFaseFilter] = useState('todos');
   const [riesgoFilter, setRiesgoFilter] = useState('todos');
@@ -87,6 +89,7 @@ export default function Promociones() {
       qc.invalidateQueries({ queryKey: ['proyectos'] });
       toast({ title: t(estado === 'cerrado' ? 'archive.done' : 'archive.restored') });
       setTab(estado === 'cerrado' ? 'archived' : 'active');
+      setDrawer(null);
     } catch (e) {
       toast({ title: t('archive.failed'), description: String(e?.message || e), variant: 'destructive' });
     }
@@ -190,6 +193,7 @@ export default function Promociones() {
         </div>
       ) : (
         <DataTable
+          onRowClick={(p) => setDrawer(p)}
           columns={[
             { key: 'codigo', label: t('prom.col.code') },
             { key: 'nombre', label: t('prom.col.project') },
@@ -209,6 +213,9 @@ export default function Promociones() {
               render: (_, p) =>
                 staff ? (
                   <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setDrawer(p)}>
+                      {t('prom.drawer.open')}
+                    </Button>
                     <Button variant="outline" size="sm" onClick={() => setDialog(p)}>
                       {t('common.edit')}
                     </Button>
@@ -233,7 +240,11 @@ export default function Promociones() {
                       </Button>
                     )}
                   </div>
-                ) : null,
+                ) : (
+                  <Button variant="outline" size="sm" onClick={() => setDrawer(p)}>
+                    {t('prom.drawer.open')}
+                  </Button>
+                ),
             },
           ]}
           rows={rows}
@@ -247,6 +258,21 @@ export default function Promociones() {
           onClose={() => setDialog(null)}
         />
       )}
+
+      <ProyectoDrawer
+        open={Boolean(drawer)}
+        proyecto={drawer}
+        cooperativa={drawer ? coopOf(drawer) : null}
+        staff={staff}
+        busy={busy}
+        onClose={() => setDrawer(null)}
+        onEdit={(p) => {
+          setDrawer(null);
+          setDialog(p);
+        }}
+        onArchive={(p) => setEstado(p, 'cerrado')}
+        onRestore={(p) => setEstado(p, 'garantia')}
+      />
     </>
   );
 }

@@ -676,5 +676,7 @@
   "prom.filter.clear": "Garbitu iragazkiak",
   "prom.empty": "Oraindik ez dago promoziorik.",
   "prom.emptyFiltered": "Ez dago iragazkiekin bat datorren promoziorik.",
-  "prom.emptyCta": "Sortu lehen promozioa"
+  "prom.emptyCta": "Sortu lehen promozioa",
+  "prom.drawer.open": "Ikusi",
+  "prom.drawer.links": "Erlazionatutako moduluak"
 }

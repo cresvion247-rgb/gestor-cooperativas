@@ -4,11 +4,13 @@ import { useI18n } from '@/lib/i18n';
 
 const cellValue = (row, c) => (c.render ? c.render(row[c.key], row) : row[c.key] ?? '—');
 
-export default function DataTable({ columns, rows, empty }) {
+export default function DataTable({ columns, rows, empty, onRowClick }) {
   const { t } = useI18n();
   const emptyMessage = empty || t('common.empty');
   const dataCols = columns.filter(c => c.key !== 'acciones');
   const actionCols = columns.filter(c => c.key === 'acciones');
+  const clickable = typeof onRowClick === 'function';
+
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* Escritorio: tabla completa */}
@@ -19,9 +21,19 @@ export default function DataTable({ columns, rows, empty }) {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {rows.map((row, i) => (
-              <tr key={row.id || i} className="transition hover:bg-slate-50">
+              <tr
+                key={row.id || i}
+                className={`transition hover:bg-slate-50${clickable ? ' cursor-pointer' : ''}`}
+                onClick={clickable ? () => onRowClick(row) : undefined}
+              >
                 {columns.map(c => (
-                  <td key={c.key} className="whitespace-nowrap px-5 py-4 text-slate-700">{c.badge ? <StatusBadge value={row[c.key]} /> : cellValue(row, c)}</td>
+                  <td
+                    key={c.key}
+                    className="whitespace-nowrap px-5 py-4 text-slate-700"
+                    onClick={c.key === 'acciones' ? (e) => e.stopPropagation() : undefined}
+                  >
+                    {c.badge ? <StatusBadge value={row[c.key]} /> : cellValue(row, c)}
+                  </td>
                 ))}
               </tr>
             ))}
@@ -32,7 +44,11 @@ export default function DataTable({ columns, rows, empty }) {
       {/* Móvil y tablet estrecha: fichas apiladas con los campos clave */}
       <div className="divide-y divide-slate-100 md:hidden">
         {rows.map((row, i) => (
-          <div key={row.id || i} className="p-4">
+          <div
+            key={row.id || i}
+            className={`p-4${clickable ? ' cursor-pointer' : ''}`}
+            onClick={clickable ? () => onRowClick(row) : undefined}
+          >
             {dataCols.map((c, idx) => (
               idx === 0 ? (
                 <div key={c.key} className="mb-1 break-words text-sm font-semibold text-slate-900">{cellValue(row, c)}</div>
@@ -44,7 +60,7 @@ export default function DataTable({ columns, rows, empty }) {
               )
             ))}
             {actionCols.length > 0 && actionCols.some(c => cellValue(row, c)) && (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-3 flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
                 {actionCols.map(c => <React.Fragment key={c.key}>{cellValue(row, c)}</React.Fragment>)}
               </div>
             )}

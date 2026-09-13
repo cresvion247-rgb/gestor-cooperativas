@@ -676,5 +676,7 @@
   "prom.filter.clear": "Clear filters",
   "prom.empty": "No developments yet.",
   "prom.emptyFiltered": "No developments match these filters.",
-  "prom.emptyCta": "Create first development"
+  "prom.emptyCta": "Create first development",
+  "prom.drawer.open": "View",
+  "prom.drawer.links": "Related modules"
 }

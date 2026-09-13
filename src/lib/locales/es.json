@@ -676,5 +676,7 @@
   "prom.filter.clear": "Limpiar filtros",
   "prom.empty": "Aún no hay promociones.",
   "prom.emptyFiltered": "Ninguna promoción coincide con estos filtros.",
-  "prom.emptyCta": "Crear primera promoción"
+  "prom.emptyCta": "Crear primera promoción",
+  "prom.drawer.open": "Ver",
+  "prom.drawer.links": "Módulos relacionados"
 }

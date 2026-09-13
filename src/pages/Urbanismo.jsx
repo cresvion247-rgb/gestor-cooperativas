@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
@@ -23,10 +24,16 @@ export default function Urbanismo() {
   const { data: proyectos = [] } = useQuery({ queryKey: ['proyectos'], queryFn: () => base44.entities.Proyecto.list('-created_date', 500) });
   const { data: expedientes = [], isLoading } = useQuery({ queryKey: ['expedientes'], queryFn: () => base44.entities.ExpedienteUrbanistico.list('-created_date', 500) });
 
-  const [proyectoFilter, setProyectoFilter] = useState('todos');
+  const [searchParams] = useSearchParams();
+  const [proyectoFilter, setProyectoFilter] = useState(searchParams.get('proyecto') || 'todos');
   const [dialog, setDialog] = useState(null);
   const [tab, setTab] = useState('active');
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    const fromUrl = searchParams.get('proyecto');
+    if (fromUrl) setProyectoFilter(fromUrl);
+  }, [searchParams]);
 
   const staff = isCoopStaff(user);
   const proyectoOf = e => proyectos.find(p => p.id === e.proyecto_id);
