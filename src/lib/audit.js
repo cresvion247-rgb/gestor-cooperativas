@@ -2,13 +2,12 @@ import { base44 } from '@/api/base44Client';
 import { supabase } from '@/api/supabaseClient';
 import { CENTRAL_TENANT_ID } from '@/lib/permissions';
 
-// Single shared audit service: every mutation flow must call logAudit.
+// Single shared audit service: every mutation flow should call logAudit.
 // Actor and IP are resolved once per session and cached (the app hard-reloads
 // on auth changes, so the cache cannot outlive a login/logout).
 //
-// Phase 2: actor comes from Supabase session + profiles (UI auth).
-// Phase 3: AuditLog.create goes through the Supabase entities façade
-// (valores_* JSON strings are parsed to jsonb at the façade boundary).
+// Audit writes must NEVER break the primary action (create/update/PDF). If RLS
+// or network fails, we log to the console and return null.
 
 let cachedActor;
 let cachedIp;
@@ -22,7 +21,7 @@ async function getActor() {
       } else {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('id, email, role, app_role')
+          .select('id, email, role, app_role, tenant_id, assigned_cooperativa_ids')
           .eq('id', session.user.id)
           .maybeSingle();
         cachedActor = {
@@ -30,6 +29,8 @@ async function getActor() {
           email: profile?.email || session.user.email || null,
           role: profile?.role ?? null,
           app_role: profile?.app_role ?? null,
+          tenant_id: profile?.tenant_id ?? null,
+          assigned_cooperativa_ids: profile?.assigned_cooperativa_ids || [],
         };
       }
     } catch (e) {
@@ -49,20 +50,33 @@ async function getIp() {
   return cachedIp;
 }
 
+function resolveAuditTenant(explicit, actor) {
+  if (explicit) return explicit;
+  if (actor?.tenant_id) return actor.tenant_id;
+  const assigned = actor?.assigned_cooperativa_ids || [];
+  if (assigned.length) return assigned[0];
+  return CENTRAL_TENANT_ID;
+}
+
 export async function logAudit({ tenant_id, accion, entidad_tipo, entidad_id, valores_anteriores, valores_nuevos, detalle }) {
-  const [usuario, ip] = await Promise.all([getActor(), getIp()]);
-  return base44.entities.AuditLog.create({
-    tenant_id: tenant_id || CENTRAL_TENANT_ID,
-    accion,
-    entidad_tipo,
-    entidad_id: entidad_id || null,
-    usuario_id: usuario?.id || null,
-    usuario_email: usuario?.email || null,
-    usuario_rol: usuario?.app_role || usuario?.role || null,
-    valores_anteriores: valores_anteriores ? JSON.stringify(valores_anteriores) : null,
-    valores_nuevos: valores_nuevos ? JSON.stringify(valores_nuevos) : null,
-    ip_direccion: ip,
-    detalle: detalle || null,
-    fecha: new Date().toISOString()
-  });
+  try {
+    const [usuario, ip] = await Promise.all([getActor(), getIp()]);
+    return await base44.entities.AuditLog.create({
+      tenant_id: resolveAuditTenant(tenant_id, usuario),
+      accion,
+      entidad_tipo,
+      entidad_id: entidad_id || null,
+      usuario_id: usuario?.id || null,
+      usuario_email: usuario?.email || null,
+      usuario_rol: usuario?.app_role || usuario?.role || null,
+      valores_anteriores: valores_anteriores ? JSON.stringify(valores_anteriores) : null,
+      valores_nuevos: valores_nuevos ? JSON.stringify(valores_nuevos) : null,
+      ip_direccion: ip,
+      detalle: detalle || null,
+      fecha: new Date().toISOString()
+    });
+  } catch (e) {
+    console.warn('[logAudit] skipped:', e?.message || e);
+    return null;
+  }
 }

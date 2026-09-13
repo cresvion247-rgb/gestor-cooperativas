@@ -18,7 +18,10 @@ export const APP_ROLES = [
 // Tenant used for global Urbalex actions (audit entries, internal staff).
 export const CENTRAL_TENANT_ID = 'urbalex-central';
 
-export const isSuperAdmin = (user) => user?.role === 'admin';
+export const PLATFORM_APP_ROLES = ['super_admin_urbalex', 'administrador_urbalex'];
+
+export const isSuperAdmin = (user) =>
+  user?.role === 'admin' || PLATFORM_APP_ROLES.includes(user?.app_role);
 
 export const assignedCooperativaIds = (user) => user?.assigned_cooperativa_ids || [];
 
