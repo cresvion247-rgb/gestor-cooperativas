@@ -22,3 +22,11 @@ export const isAlertaArchived = (a) => a?.estado === 'archivado';
 
 /** Support + Maintenance: cerrada is the archive bucket */
 export const isCerradaArchived = (r) => r?.estado === 'cerrada';
+
+/** Member documents: verified/rejected leave the working queue */
+export const isDocumentoSocioArchived = (d) =>
+  d?.estado === 'verificado' || d?.estado === 'rechazado';
+
+/** Legal documents: archivado or caducado */
+export const isDocumentoLegalArchived = (d) =>
+  d?.estado === 'archivado' || d?.estado === 'caducado';
