@@ -6,6 +6,7 @@ import PageHeader from '@/components/erp/PageHeader';
 import DataTable from '@/components/erp/DataTable';
 import DocumentoLegalDialog from '@/components/juridico/DocumentoLegalDialog';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useI18n } from '@/lib/i18n';
 import { isCoopStaff, isSuperAdmin } from '@/lib/permissions';
 import { formatDate } from '@/lib/format';
@@ -43,16 +44,19 @@ export default function Juridico() {
       />
       <div className="mb-4 flex items-center gap-3">
         <label className="text-sm font-medium text-slate-600">{t('users.cooperative')}</label>
-        <select value={coopFilter} onChange={e => setCoopFilter(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm">
-          <option value="todas">{t('common.all')}</option>
-          {coops.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-        </select>
+        <Select value={coopFilter} onValueChange={setCoopFilter}>
+          <SelectTrigger className="h-9 w-[16rem] rounded-xl border-slate-200 bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todas">{t('common.all')}</SelectItem>
+            {coops.map(c => <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[
           { key: 'titulo', label: t('leg.col.title') },
-          { key: 'tipo', label: t('leg.col.type') },
-          { key: 'referencia', label: t('leg.col.ref') },
           { key: 'cooperativa_id', label: t('users.cooperative'), render: (_, d) => coopOf(d)?.nombre || '—' },
           { key: 'fecha_documento', label: t('leg.col.date'), render: v => formatDate(v) },
           { key: 'visibilidad', label: t('leg.col.visibility'), render: v => t(`vis.${v}`) },
