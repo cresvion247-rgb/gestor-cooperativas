@@ -8,6 +8,7 @@ import FinanzasStats from '@/components/finanzas/FinanzasStats';
 import AportacionDialog from '@/components/finanzas/AportacionDialog';
 import PagoDialog from '@/components/finanzas/PagoDialog';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/AuthContext';
@@ -44,9 +45,16 @@ export default function Finanzas() {
       />
       <FinanzasStats aportaciones={aportaciones} />
       <div className="mb-4 flex items-center gap-3">
-        <select value={filtro} onChange={e => setFiltro(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700">
-          {FILTROS.map(f => <option key={f} value={f}>{f === 'todos' ? t('common.all') : st(f)}</option>)}
-        </select>
+        <Select value={filtro} onValueChange={setFiltro}>
+          <SelectTrigger className="h-9 w-[11.5rem] rounded-xl border-slate-200 bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {FILTROS.map(f => (
+              <SelectItem key={f} value={f}>{f === 'todos' ? t('common.all') : st(f)}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[

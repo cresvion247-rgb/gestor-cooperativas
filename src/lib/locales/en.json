@@ -531,7 +531,7 @@
   "fin.col.member": "Member",
   "fin.stats.due": "Total due",
   "fin.stats.collected": "Collected",
-  "fin.stats.pending": "Outstanding",
+  "fin.stats.pending": "Pending",
   "fin.stats.overdue": "Overdue contributions",
   "fin.created": "Contribution created",
   "fin.updated": "Contribution updated",
