@@ -11,7 +11,6 @@ import { isInternalUser, isCoopStaff, isMember, isSuperAdmin } from '@/lib/permi
 //   'member'  — members + internal staff (portal)
 //   'internal'— not external contractors
 //   'staff'   — coop staff only
-//   'admin'   — platform admin only
 const items = [
   ['/', 'nav.home', LayoutDashboard, 'all'],
   ['/portal', 'nav.portal', UserRound, 'member'],
@@ -32,7 +31,7 @@ const items = [
   ['/soporte', 'nav.soporte', LifeBuoy, 'internal'],
   ['/informes', 'nav.informes', BarChart3],
   ['/bandeja', 'nav.bandeja', Inbox, 'staff'],
-  ['/administracion', 'nav.administracion', Settings, 'admin']
+  ['/administracion', 'nav.administracion', Settings]
 ];
 
 const MEMBER_NAV = new Set(['/', '/portal', '/documentos', '/comunicaciones', '/incidencias', '/soporte']);
