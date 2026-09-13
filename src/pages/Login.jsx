@@ -30,6 +30,7 @@ export default function Login() {
         password,
       });
       if (signError) throw signError;
+      try { sessionStorage.setItem('just_signed_in', email); } catch { /* ignore */ }
       window.location.href = returnTo;
     } catch (err) {
       setError(err.message || t("auth.invalid"));

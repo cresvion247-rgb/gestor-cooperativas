@@ -7,6 +7,7 @@ import LanguageSelector from '@/components/erp/LanguageSelector';
 import ConciergeProvider from '@/components/concierge/ConciergeProvider';
 import ConciergeButton from '@/components/concierge/ConciergeButton';
 import NotificationsBell from '@/components/erp/NotificationsBell';
+import UserMenu from '@/components/erp/UserMenu';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/AuthContext';
 import { isInternalUser } from '@/lib/permissions';
@@ -37,7 +38,7 @@ export default function AppLayout() {
           <NotificationsBell />
           {isInternalUser(user) && <ConciergeButton compact />}
           <LanguageSelector />
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-teal-700 text-xs font-bold text-white">UA</div>
+          <UserMenu />
           {searchOpen && (
             <div className="absolute inset-x-0 top-0 z-30 flex h-16 items-center gap-2 border-b border-slate-200 bg-white px-3 md:hidden">
               <div className="relative min-w-0 flex-1">

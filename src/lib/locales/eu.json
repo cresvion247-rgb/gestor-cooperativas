@@ -619,5 +619,11 @@
   "users.inviteDeployHint": "Deploy egin invitar_usuario Edge Function Supabase-n (ikusi DEPLOY.md) eta saiatu berriro. Edo kudeatu erabiltzaile bat eta jarri Super Admin profila.",
   "admin.signInAdmin": "Hasi saioa admin gisa",
   "admin.signOut": "Itxi saioa",
-  "admin.signedInAs": "Saioa hasita:"
+  "admin.signedInAs": "Saioa hasita:",
+  "header.signedInTitle": "Saioa hasita",
+  "header.signedInAs": "Saioa hasita:",
+  "header.roleAdmin": "Plataformako admin",
+  "header.roleMember": "Bazkide",
+  "header.roleStaff": "Langileak",
+  "header.roleUser": "Erabiltzailea"
 }

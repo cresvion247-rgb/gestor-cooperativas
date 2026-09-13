@@ -619,5 +619,11 @@
   "users.inviteDeployHint": "Despliega la Edge Function invitar_usuario en Supabase (ver DEPLOY.md) y reintenta. O abre Gestionar en un usuario existente y ponle perfil Super Admin.",
   "admin.signInAdmin": "Iniciar sesión como admin",
   "admin.signOut": "Cerrar sesión",
-  "admin.signedInAs": "Sesión iniciada como"
+  "admin.signedInAs": "Sesión iniciada como",
+  "header.signedInTitle": "Sesión iniciada",
+  "header.signedInAs": "Sesión iniciada como",
+  "header.roleAdmin": "Admin de plataforma",
+  "header.roleMember": "Socio",
+  "header.roleStaff": "Personal",
+  "header.roleUser": "Usuario"
 }

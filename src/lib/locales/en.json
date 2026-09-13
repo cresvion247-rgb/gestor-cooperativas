@@ -619,5 +619,11 @@
   "users.inviteDeployHint": "Deploy the invitar_usuario Edge Function in Supabase (see DEPLOY.md), then try again. Or open Manage on an existing user and set their profile to Super Admin.",
   "admin.signInAdmin": "Sign in as admin",
   "admin.signOut": "Sign out",
-  "admin.signedInAs": "Currently signed in as"
+  "admin.signedInAs": "Currently signed in as",
+  "header.signedInTitle": "Signed in",
+  "header.signedInAs": "Signed in as",
+  "header.roleAdmin": "Platform admin",
+  "header.roleMember": "Member",
+  "header.roleStaff": "Staff",
+  "header.roleUser": "User"
 }
