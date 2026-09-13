@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Building2, LayoutDashboard, FolderKanban, Users, Scale, FileSignature, Euro, HardHat, Landmark, FileText, Megaphone, BarChart3, Settings, Truck, KeyRound, Map, UserRound, Wrench, LifeBuoy, Inbox } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/AuthContext';
-import { isInternalUser, isCoopStaff, isMember, isSuperAdmin } from '@/lib/permissions';
+import { isInternalUser, isCoopStaff, isMember } from '@/lib/permissions';
 
 // visibility:
 //   undefined — staff ERP shell (hidden from members)
@@ -44,7 +44,6 @@ export default function Sidebar({ mobile = false, onNavigate }) {
   const visible = items.filter(([to, , , vis]) => {
     if (member) return MEMBER_NAV.has(to);
 
-    if (vis === 'admin') return isSuperAdmin(user);
     if (vis === 'member') return isInternalUser(user);
     if (vis === 'internal') return isInternalUser(user);
     if (vis === 'staff') return isCoopStaff(user);
