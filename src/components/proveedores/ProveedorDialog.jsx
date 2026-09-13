@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { logAudit } from '@/lib/audit';
 import { useI18n } from '@/lib/i18n';
@@ -79,9 +80,14 @@ export default function ProveedorDialog({ proveedor, cooperativas, onClose }) {
           {field('fecha_homologacion', t('prov.f.homologation'), 'date')}
           <div>
             <Label className="mb-1">{t('prov.f.rating')}</Label>
-            <select value={valoracion} onChange={e => setValoracion(e.target.value)} className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm">
-              {VALORACIONES.map(v => <option key={v} value={v}>{v ? st(v) : '—'}</option>)}
-            </select>
+            <Select value={valoracion || undefined} onValueChange={setValoracion}>
+              <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50">
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                {VALORACIONES.filter(Boolean).map(v => <SelectItem key={v} value={v}>{st(v)}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           {field('direccion', t('coop.f.address'))}
           <div className="sm:col-span-2">
@@ -90,10 +96,14 @@ export default function ProveedorDialog({ proveedor, cooperativas, onClose }) {
           </div>
           <div className="sm:col-span-2">
             <Label className="mb-1">{t('users.cooperative')} *</Label>
-            <select value={cooperativaId} onChange={e => setCooperativaId(e.target.value)} disabled={isEdit} className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm disabled:opacity-60">
-              <option value="">—</option>
-              {cooperativas.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <Select value={cooperativaId || undefined} onValueChange={setCooperativaId} disabled={isEdit}>
+              <SelectTrigger className="h-10 w-full rounded-xl border-slate-200 bg-slate-50 disabled:opacity-60">
+                <SelectValue placeholder="—" />
+              </SelectTrigger>
+              <SelectContent>
+                {cooperativas.map(c => <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>

@@ -6,7 +6,9 @@ import DataTable from '@/components/erp/DataTable';
 import ConfirmDialog from '@/components/erp/ConfirmDialog';
 import ProveedorDialog from '@/components/proveedores/ProveedorDialog';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import { Plus } from 'lucide-react';
 import { logAudit } from '@/lib/audit';
 import { useI18n } from '@/lib/i18n';
 import { isCoopStaff } from '@/lib/permissions';
@@ -62,12 +64,21 @@ export default function ProveedoresTab() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-slate-600">{t('users.cooperative')}</label>
-          <select value={coopFilter} onChange={e => setCoopFilter(e.target.value)} className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm">
-            <option value="todas">{t('common.all')}</option>
-            {coops.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-          </select>
+          <Select value={coopFilter} onValueChange={setCoopFilter}>
+            <SelectTrigger className="h-9 w-[16rem] rounded-xl border-slate-200 bg-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todas">{t('common.all')}</SelectItem>
+              {coops.map(c => <SelectItem key={c.id} value={c.id}>{c.nombre}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
-        {staff && <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setDialog('new')}>{t('prov.action')}</Button>}
+        {staff && (
+          <Button size="sm" className="bg-[#102A43] hover:bg-[#173F5F]" onClick={() => setDialog('new')}>
+            <Plus className="mr-1.5 h-4 w-4" />{t('prov.action')}
+          </Button>
+        )}
       </div>
       {isLoading ? <p className="text-slate-500">{t('common.loading')}</p> : (
         <DataTable columns={[
