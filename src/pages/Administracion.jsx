@@ -26,7 +26,7 @@ export default function Administracion() {
 
   return (
     <>
-      <PageHeader eyebrow="Urbalex ERP" title={t('admin.title')} description={t('admin.desc')} />
+      <PageHeader eyebrow="Gestor Cooperativa" title={t('admin.title')} description={t('admin.desc')} />
       <div className="mb-6 flex gap-2">
         {[['usuarios', 'admin.tabUsers'], ['auditoria', 'admin.tabAudit']].map(([k, labelKey]) => (
           <button key={k} onClick={() => setTab(k)} className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${tab === k ? 'bg-[#102A43] text-white shadow-sm' : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}`}>{t(labelKey)}</button>

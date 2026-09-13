@@ -43,3 +43,14 @@ export const isInternalUser = (user) =>
 // Personal de cooperativa: roles internos con perfil asignado, excluidos los socios.
 export const isCoopStaff = (user) =>
   isSuperAdmin(user) || (isInternalUser(user) && Boolean(user?.app_role) && user.app_role !== 'socio_cooperativista');
+
+// Cooperative member (member portal audience). Explicit profile only.
+export const isMember = (user) => user?.app_role === 'socio_cooperativista';
+
+/** Paths members may open. Everything else redirects to /portal. */
+export const MEMBER_ALLOWED_PATHS = ['/', '/portal', '/alta-socio', '/documentos', '/comunicaciones', '/incidencias', '/soporte'];
+
+export const isMemberAllowedPath = (pathname) => {
+  if (!pathname) return false;
+  return MEMBER_ALLOWED_PATHS.some((p) => pathname === p || (p !== '/' && pathname.startsWith(`${p}/`)));
+};

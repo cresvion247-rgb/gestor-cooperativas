@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import MemberRouteGuard from '@/components/erp/MemberRouteGuard';
 import { Outlet } from 'react-router-dom';
 import { Menu, Search, X } from 'lucide-react';
 import Sidebar from '@/components/erp/Sidebar';
@@ -47,7 +48,7 @@ export default function AppLayout() {
             </div>
           )}
         </header>
-        <main className="p-4 md:p-8"><Outlet /></main>
+        <main className="p-4 md:p-8"><MemberRouteGuard><Outlet /></MemberRouteGuard></main>
       </div>
       </div>
     </ConciergeProvider>
