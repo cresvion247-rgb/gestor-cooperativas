@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { isMember, isMemberAllowedPath } from '@/lib/permissions';
+import { hasLimitedShell, isMemberAllowedPath } from '@/lib/permissions';
 
 /** Redirect cooperative members away from staff-only routes. */
 export default function MemberRouteGuard({ children }) {
@@ -9,7 +9,7 @@ export default function MemberRouteGuard({ children }) {
   const location = useLocation();
 
   if (isLoadingAuth) return children;
-  if (isMember(user) && !isMemberAllowedPath(location.pathname)) {
+  if (hasLimitedShell(user) && !isMemberAllowedPath(location.pathname)) {
     return <Navigate to="/portal" replace />;
   }
   return children;

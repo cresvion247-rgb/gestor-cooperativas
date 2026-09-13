@@ -625,5 +625,6 @@
   "header.roleAdmin": "Platform admin",
   "header.roleMember": "Member",
   "header.roleStaff": "Staff",
-  "header.roleUser": "User"
+  "header.roleUser": "User",
+  "header.rolePending": "Pending access"
 }

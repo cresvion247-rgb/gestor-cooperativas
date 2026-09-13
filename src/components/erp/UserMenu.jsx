@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useI18n } from '@/lib/i18n';
-import { isSuperAdmin, isMember, isCoopStaff } from '@/lib/permissions';
+import { isSuperAdmin, isMember, isCoopStaff, isUnassignedUser } from '@/lib/permissions';
 import { useToast } from '@/components/ui/use-toast';
 
 function initialsFor(user) {
@@ -20,6 +20,7 @@ function initialsFor(user) {
 function roleLabel(user, t, st) {
   if (isSuperAdmin(user)) return t('header.roleAdmin');
   if (isMember(user)) return t('header.roleMember');
+  if (isUnassignedUser(user)) return t('header.rolePending');
   if (isCoopStaff(user)) return user?.app_role ? st(user.app_role) : t('header.roleStaff');
   if (user?.app_role) return st(user.app_role);
   return t('header.roleUser');

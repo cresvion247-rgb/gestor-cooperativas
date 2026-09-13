@@ -625,5 +625,6 @@
   "header.roleAdmin": "Plataformako admin",
   "header.roleMember": "Bazkide",
   "header.roleStaff": "Langileak",
-  "header.roleUser": "Erabiltzailea"
+  "header.roleUser": "Erabiltzailea",
+  "header.rolePending": "Sarbide zain"
 }

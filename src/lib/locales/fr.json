@@ -625,5 +625,6 @@
   "header.roleAdmin": "Admin plateforme",
   "header.roleMember": "Membre",
   "header.roleStaff": "Personnel",
-  "header.roleUser": "Utilisateur"
+  "header.roleUser": "Utilisateur",
+  "header.rolePending": "Accès en attente"
 }

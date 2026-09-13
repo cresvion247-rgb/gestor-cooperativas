@@ -47,7 +47,14 @@ export const isCoopStaff = (user) =>
 // Cooperative member (member portal audience). Explicit profile only.
 export const isMember = (user) => user?.app_role === 'socio_cooperativista';
 
-/** Paths members may open. Everything else redirects to /portal. */
+// Signed up but not given a profile yet — must NOT see the full staff ERP.
+export const isUnassignedUser = (user) =>
+  Boolean(user) && !isSuperAdmin(user) && !user?.app_role;
+
+// Tight nav + route lock: members and anyone without an assigned profile.
+export const hasLimitedShell = (user) => isMember(user) || isUnassignedUser(user);
+
+/** Paths limited-shell users may open. Everything else redirects to /portal. */
 export const MEMBER_ALLOWED_PATHS = ['/', '/portal', '/alta-socio', '/documentos', '/comunicaciones', '/incidencias', '/soporte'];
 
 export const isMemberAllowedPath = (pathname) => {
