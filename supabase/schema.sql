@@ -20,69 +20,6 @@ begin
 end;
 $$;
 
--- Platform Super Admin (profiles.role = 'admin')
-create or replace function public.is_platform_admin()
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  -- Platform operators: profiles.role = admin OR Urbalex admin app roles
-  -- (migration often seeds app_role without flipping role to admin).
-  select exists (
-    select 1
-    from public.profiles p
-    where p.id = (select auth.uid())
-      and (
-        p.role = 'admin'
-        or p.app_role in ('super_admin_urbalex', 'administrador_urbalex')
-      )
-  );
-$$;
-
--- Tenant access: own tenant_id, assigned_cooperativa_ids, or platform admin
-create or replace function public.can_access_tenant(p_tenant_id text)
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select exists (
-    select 1
-    from public.profiles p
-    where p.id = (select auth.uid())
-      and (
-        p.role = 'admin'
-        or p.app_role in ('super_admin_urbalex', 'administrador_urbalex')
-        or (p.tenant_id is not null and p.tenant_id = p_tenant_id)
-        or (p.assigned_cooperativa_ids is not null and p_tenant_id = any (p.assigned_cooperativa_ids))
-      )
-  );
-$$;
-
--- Assigned staff (or admin) may mutate cooperativa-scoped rows when assigned
-create or replace function public.can_mutate_tenant(p_tenant_id text)
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
-as $$
-  select exists (
-    select 1
-    from public.profiles p
-    where p.id = (select auth.uid())
-      and (
-        p.role = 'admin'
-        or p.app_role in ('super_admin_urbalex', 'administrador_urbalex')
-        or (p.tenant_id is not null and p.tenant_id = p_tenant_id)
-        or (p.assigned_cooperativa_ids is not null and p_tenant_id = any (p.assigned_cooperativa_ids))
-      )
-  );
-$$;
-
 -- -----------------------------------------------------------------------------
 -- profiles (Base44 User + auth.users)
 -- -----------------------------------------------------------------------------
@@ -147,6 +84,73 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- -----------------------------------------------------------------------------
+-- RLS helpers (require public.profiles to exist — language sql binds at CREATE)
+-- -----------------------------------------------------------------------------
+
+-- Platform Super Admin (profiles.role = 'admin')
+create or replace function public.is_platform_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  -- Platform operators: profiles.role = admin OR Urbalex admin app roles
+  -- (migration often seeds app_role without flipping role to admin).
+  select exists (
+    select 1
+    from public.profiles p
+    where p.id = (select auth.uid())
+      and (
+        p.role = 'admin'
+        or p.app_role in ('super_admin_urbalex', 'administrador_urbalex')
+      )
+  );
+$$;
+
+-- Tenant access: own tenant_id, assigned_cooperativa_ids, or platform admin
+create or replace function public.can_access_tenant(p_tenant_id text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.profiles p
+    where p.id = (select auth.uid())
+      and (
+        p.role = 'admin'
+        or p.app_role in ('super_admin_urbalex', 'administrador_urbalex')
+        or (p.tenant_id is not null and p.tenant_id = p_tenant_id)
+        or (p.assigned_cooperativa_ids is not null and p_tenant_id = any (p.assigned_cooperativa_ids))
+      )
+  );
+$$;
+
+-- Assigned staff (or admin) may mutate cooperativa-scoped rows when assigned
+create or replace function public.can_mutate_tenant(p_tenant_id text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.profiles p
+    where p.id = (select auth.uid())
+      and (
+        p.role = 'admin'
+        or p.app_role in ('super_admin_urbalex', 'administrador_urbalex')
+        or (p.tenant_id is not null and p.tenant_id = p_tenant_id)
+        or (p.assigned_cooperativa_ids is not null and p_tenant_id = any (p.assigned_cooperativa_ids))
+      )
+  );
+$$;
 
 -- -----------------------------------------------------------------------------
 -- cooperativas (Cooperativa)
