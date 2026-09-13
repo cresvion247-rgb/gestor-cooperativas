@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import DataTable from '@/components/erp/DataTable';
 import UserDialog from '@/components/erp/admin/UserDialog';
 import { Button } from '@/components/ui/button';
@@ -50,27 +51,48 @@ export default function UsersPanel() {
     setBusy(false);
   };
 
-  // Phase 2 stub: base44.users.inviteUser removed from live auth path.
-  // Client anon key cannot invite users; needs Supabase Admin API / Edge Function.
   const invite = async () => {
-    if (!email) return;
+    if (!email.trim()) return;
     setInviting(true);
     try {
-      toast({
-        title: t('users.inviteFailed'),
-        description:
-          'Invite requires a server-side Supabase Admin call (Edge Function). Checklist: (1) create Edge Function with service role, (2) auth.admin.inviteUserByEmail(email), (3) set profiles.app_role / tenant_id, (4) wire this button to that function. Until then, create the user in Supabase Dashboard Auth and edit profiles.',
-        variant: 'destructive',
+      const { data, error } = await supabase.functions.invoke('invitar_usuario', {
+        body: {
+          email: email.trim(),
+          app_role: role,
+          tenant_id: tenant || null,
+          redirect_to: window.location.origin,
+        },
       });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
       await logAudit({
         tenant_id: tenant || CENTRAL_TENANT_ID,
-        accion: 'usuario_invitacion_stub',
+        accion: 'usuario_invitado',
         entidad_tipo: 'User',
-        entidad_id: email,
-        valores_nuevos: { email, app_role: role, tenant_id: tenant, status: 'stub_pending_edge_function' },
+        entidad_id: data?.user_id || email,
+        valores_nuevos: { email, app_role: role, tenant_id: tenant || null, invited_by_email: data?.invited_by_email },
       });
+
+      if (data?.invite_link) {
+        try { await navigator.clipboard.writeText(data.invite_link); } catch { /* ignore */ }
+        toast({
+          title: t('users.invited'),
+          description: t('users.inviteLinkCopied'),
+        });
+      } else {
+        toast({ title: t('users.invited'), description: t('users.inviteEmailSent') });
+      }
+      setEmail('');
+      qc.invalidateQueries({ queryKey: ['users'] });
     } catch (e) {
-      toast({ title: t('users.inviteFailed'), description: String(e?.message || e), variant: 'destructive' });
+      const msg = String(e?.message || e);
+      const needsDeploy = /not found|404|Failed to send|FunctionsRelayError|FunctionException/i.test(msg);
+      toast({
+        title: t('users.inviteFailed'),
+        description: needsDeploy ? t('users.inviteDeployHint') : msg,
+        variant: 'destructive',
+      });
     }
     setInviting(false);
   };

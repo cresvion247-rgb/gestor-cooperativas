@@ -92,7 +92,7 @@
   "admin.tabUsers": "Usuarios y roles",
   "admin.tabAudit": "Registro de auditoría",
   "users.inviteTitle": "Invitar usuario",
-  "users.inviteHint": "Socios, consejo rector y proveedores requieren cooperativa de pertenencia; el personal interno de Urbalex se asigna por cooperativa.",
+  "users.inviteHint": "Invita por email con un perfil. Para Administración, elige Super Admin / Administrador. Usuarios existentes: Gestionar → cambiar perfil.",
   "users.email": "Email",
   "users.profile": "Perfil",
   "users.cooperative": "Cooperativa",
@@ -612,5 +612,9 @@
   "concierge.speakOff": "Activar respuestas habladas",
   "con.f.title": "Título",
   "comm.col.title": "Título",
-  "comm.col.type": "Tipo"
+  "comm.col.type": "Tipo",
+  "users.adminGrantHint": "Elige “superadmin urbalex” o “administrador urbalex” para dar acceso a Administración (sin SQL).",
+  "users.inviteLinkCopied": "Enlace de invitación copiado — envíaselo si no llega el correo.",
+  "users.inviteEmailSent": "Deberían recibir un correo para establecer su contraseña.",
+  "users.inviteDeployHint": "Despliega la Edge Function invitar_usuario en Supabase (ver DEPLOY.md) y reintenta. O abre Gestionar en un usuario existente y ponle perfil Super Admin."
 }

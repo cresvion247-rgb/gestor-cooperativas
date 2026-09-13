@@ -92,7 +92,7 @@
   "admin.tabUsers": "Users and roles",
   "admin.tabAudit": "Audit log",
   "users.inviteTitle": "Invite user",
-  "users.inviteHint": "Members, board members and suppliers need a home cooperative; internal Urbalex staff are assigned per cooperative.",
+  "users.inviteHint": "Invite by email with a profile. For Administration access, pick Super Admin / Administrator. Existing users: Manage → change profile.",
   "users.email": "Email",
   "users.profile": "Profile",
   "users.cooperative": "Cooperative",
@@ -612,5 +612,9 @@
   "concierge.speakOff": "Turn on spoken replies",
   "con.f.title": "Title",
   "comm.col.title": "Title",
-  "comm.col.type": "Type"
+  "comm.col.type": "Type",
+  "users.adminGrantHint": "Choose “Urbalex super admin” or “Urbalex administrator” to grant Administration access (no SQL).",
+  "users.inviteLinkCopied": "Invite link copied — send it to them if email did not arrive.",
+  "users.inviteEmailSent": "They should receive an email to set their password.",
+  "users.inviteDeployHint": "Deploy the invitar_usuario Edge Function in Supabase (see DEPLOY.md), then try again. Or open Manage on an existing user and set their profile to Super Admin."
 }

@@ -6,6 +6,7 @@
 | `enviar_email_miembro` | Email one member | Stub until `RESEND_API_KEY` (+ `EMAIL_FROM`) |
 | `notificar_cooperativa` | Email fan-out (alerta created on client) | Stub until Resend |
 | `concierge_hablar` | Neural TTS | Stub; client uses `speechSynthesis` |
+| `invitar_usuario` | Invite user + set `profiles` role/app_role | **Required for Admin → Invite** |
 
 Deploy example:
 
@@ -14,6 +15,7 @@ supabase functions deploy url_documento_privado
 supabase functions deploy enviar_email_miembro
 supabase functions deploy notificar_cooperativa
 supabase functions deploy concierge_hablar
+supabase functions deploy invitar_usuario
 supabase secrets set RESEND_API_KEY=... EMAIL_FROM=Urbalex <noreply@yourdomain.com>
 ```
 

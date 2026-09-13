@@ -6,6 +6,15 @@ This is not a Base44 app. There is no `base44` CLI, no hosted Base44 backend, an
 
 ---
 
+## 0b. Invite users from Administration (no SQL)
+
+1. Deploy the Edge Function once:
+   ```bash
+   supabase functions deploy invitar_usuario
+   ```
+2. In the app: **Administration → Users and roles** → Invite user (pick Super Admin / Administrator for full admin), **or** Manage an existing user and set that profile (saves `role=admin` automatically).
+3. Optional: set Auth Site URL / redirect URLs to your Vercel domain so invite links land on `/login`.
+
 ## 1. Environment variables
 
 ### Client (Vite / Vercel)

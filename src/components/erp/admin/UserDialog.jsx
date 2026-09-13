@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { logAudit } from '@/lib/audit';
-import { APP_ROLES, CENTRAL_TENANT_ID } from '@/lib/permissions';
+import { APP_ROLES, CENTRAL_TENANT_ID, PLATFORM_APP_ROLES } from '@/lib/permissions';
 import { useI18n } from '@/lib/i18n';
 
 export default function UserDialog({ user, cooperativas, onClose }) {
@@ -24,14 +24,23 @@ export default function UserDialog({ user, cooperativas, onClose }) {
     setSaving(true);
     try {
       const inactive = estado === 'inactivo';
-      await base44.entities.User.update(user.id, { app_role: appRole || null, tenant_id: inactive ? null : (tenant || null), assigned_cooperativa_ids: inactive ? [] : assigned, estado });
+      const platform = PLATFORM_APP_ROLES.includes(appRole);
+      const payload = {
+        app_role: appRole || null,
+        tenant_id: inactive || platform ? null : (tenant || null),
+        assigned_cooperativa_ids: inactive ? [] : assigned,
+        estado,
+        // Keep platform role in sync so Administration opens without SQL
+        role: inactive ? 'user' : (platform ? 'admin' : (user.role === 'admin' && !platform ? 'user' : user.role || 'user')),
+      };
+      await base44.entities.User.update(user.id, payload);
       await logAudit({
-        tenant_id: (inactive ? null : tenant) || user.tenant_id || CENTRAL_TENANT_ID,
+        tenant_id: (inactive || platform ? null : tenant) || user.tenant_id || CENTRAL_TENANT_ID,
         accion: inactive ? 'usuario_desactivado' : (user.estado === 'inactivo' && estado === 'activo' ? 'usuario_reactivado' : 'usuario_actualizado'),
         entidad_tipo: 'User',
         entidad_id: user.id,
-        valores_anteriores: { app_role: user.app_role, tenant_id: user.tenant_id, assigned_cooperativa_ids: user.assigned_cooperativa_ids, estado: user.estado },
-        valores_nuevos: { app_role: appRole, tenant_id: inactive ? null : tenant, assigned_cooperativa_ids: inactive ? [] : assigned, estado }
+        valores_anteriores: { role: user.role, app_role: user.app_role, tenant_id: user.tenant_id, assigned_cooperativa_ids: user.assigned_cooperativa_ids, estado: user.estado },
+        valores_nuevos: payload
       });
       toast({ title: t('users.updated') });
       qc.invalidateQueries({ queryKey: ['users'] });
@@ -60,6 +69,7 @@ export default function UserDialog({ user, cooperativas, onClose }) {
               <option value="">{t('users.noProfile')}</option>
               {APP_ROLES.map(r => <option key={r} value={r}>{st(r)}</option>)}
             </select>
+            <p className="mt-1 text-xs text-slate-500">{t('users.adminGrantHint')}</p>
           </div>
           <div>
             <Label className="mb-1">{t('users.membership')}</Label>

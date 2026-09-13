@@ -92,7 +92,7 @@
   "admin.tabUsers": "Erabiltzaileak eta rolak",
   "admin.tabAudit": "Auditoretza-erregistroa",
   "users.inviteTitle": "Erabiltzailea gonbidatu",
-  "users.inviteHint": "Kideek, kontseilu erreaktoreak eta hornitzaileek beren kooperatiba behar dute; Urbalexeko barne-langileak kooperatikaren arabera esleitzen dira.",
+  "users.inviteHint": "Gonbidatu emailez profil batekin. Administraziorako, Super Admin / Administratzailea. Lehendik daudenak: Kudeatu → aldatu profila.",
   "users.email": "Emaila",
   "users.profile": "Profila",
   "users.cooperative": "Kooperatiba",
@@ -612,5 +612,9 @@
   "concierge.speakOff": "Aktibatu ahots-erantzunak",
   "con.f.title": "Izenburua",
   "comm.col.title": "Izenburua",
-  "comm.col.type": "Mota"
+  "comm.col.type": "Mota",
+  "users.adminGrantHint": "Aukeratu “urbalex super administratzailea” edo “urbalex administratzailea” Administrazioa emateko (SQLrik gabe).",
+  "users.inviteLinkCopied": "Gonbidapen-esteka kopiatuta — bidali iezaiozu postarik iristen ez bada.",
+  "users.inviteEmailSent": "Pasahitza ezartzeko mezu bat jaso beharko lukete.",
+  "users.inviteDeployHint": "Deploy egin invitar_usuario Edge Function Supabase-n (ikusi DEPLOY.md) eta saiatu berriro. Edo kudeatu erabiltzaile bat eta jarri Super Admin profila."
 }
